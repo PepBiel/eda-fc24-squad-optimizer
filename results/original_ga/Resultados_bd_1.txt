@@ -1,0 +1,556 @@
+Bronce Básico – 2 requisitos
+
+Plata Versátil – 2
+
+Liga Variada Económica – 4
+
+Nación Única España – 3
+
+Química Compacta – 3
+
+Oro Premium – 2
+
+Galácticos Sencillos – 2
+
+Nación Única Brasil Elite – 3
+
+Icon Flash – 3
+
+Multiliga Química – 4
+
+Híbrido Budget – 5
+
+Defensa de Hierro – 3
+
+Extremos Prolíficos – 4
+
+TriNación Elite – 4
+
+Icon Thunder Squad – 4
+
+Liga y Nación Mixta – 6
+
+Héroes de Champions – 3
+
+Leyendas Supremas – 7
+
+Selección Épica – 6
+
+Equip ofensiu – 6
+
+---------------------------------- ITERACIÓ 1 ----------------------------------
+
+[
+    {
+        "challenge_name": "Bronce Básico",
+        "unmet_requirements": 0,
+        "team_price": 3150
+    },
+    {
+        "challenge_name": "Plata Versátil",
+        "unmet_requirements": 0,
+        "team_price": 2900
+    },
+    {
+        "challenge_name": "Liga Variada Económica",
+        "unmet_requirements": 0,
+        "team_price": 13950
+    },
+    {
+        "challenge_name": "Nación Única España",
+        "unmet_requirements": 0,
+        "team_price": 8250
+    },
+    {
+        "challenge_name": "Química Compacta",
+        "unmet_requirements": 0,
+        "team_price": 6450
+    },
+    {
+        "challenge_name": "Oro Premium",
+        "unmet_requirements": 0,
+        "team_price": 131950
+    },
+    {
+        "challenge_name": "Galácticos Sencillos",
+        "unmet_requirements": 0,
+        "team_price": 94850
+    },
+    {
+        "challenge_name": "Nación Única Brasil Elite",
+        "unmet_requirements": 0,
+        "team_price": 160150
+    },
+    {
+        "challenge_name": "Icon Flash",
+        "unmet_requirements": 1,
+        "team_price": 333750
+    },
+    {
+        "challenge_name": "Multiliga Química",
+        "unmet_requirements": 0,
+        "team_price": 9500
+    },
+    {
+        "challenge_name": "Híbrido Budget",
+        "unmet_requirements": 0,
+        "team_price": 140200
+    },
+    {
+        "challenge_name": "Defensa de Hierro",
+        "unmet_requirements": 0,
+        "team_price": 14450
+    },
+    {
+        "challenge_name": "Extremos Prolíficos",
+        "unmet_requirements": 0,
+        "team_price": 5250
+    },
+    {
+        "challenge_name": "TriNación Elite",
+        "unmet_requirements": 1,
+        "team_price": 134050
+    },
+    {
+        "challenge_name": "Icon Thunder Squad",
+        "unmet_requirements": 2,
+        "team_price": 506200
+    },
+    {
+        "challenge_name": "Liga y Nación Mixta",
+        "unmet_requirements": 1,
+        "team_price": 45600
+    },
+    {
+        "challenge_name": "Héroes de Champions",
+        "unmet_requirements": 1,
+        "team_price": 117550
+    },
+    {
+        "challenge_name": "Leyendas Supremas",
+        "unmet_requirements": 2,
+        "team_price": 30000
+    },
+    {
+        "challenge_name": "Selección Épica",
+        "unmet_requirements": 1,
+        "team_price": 124500
+    },
+    {
+        "challenge_name": "Equip ofensiu",
+        "unmet_requirements": 0,
+        "team_price": 21500
+    }
+]
+---------------------------------- ITERACIÓ 2 ----------------------------------
+[
+            {
+                "challenge_name": "Bronce Básico",
+                "unmet_requirements": 0,
+                "team_price": 8100
+            },
+            {
+                "challenge_name": "Plata Versátil",
+                "unmet_requirements": 0,
+                "team_price": 3000
+            },
+            {
+                "challenge_name": "Liga Variada Económica",
+                "unmet_requirements": 0,
+                "team_price": 3400
+            },
+            {
+                "challenge_name": "Nación Única España",
+                "unmet_requirements": 0,
+                "team_price": 7800
+            },
+            {
+                "challenge_name": "Química Compacta",
+                "unmet_requirements": 0,
+                "team_price": 4450
+            },
+            {
+                "challenge_name": "Oro Premium",
+                "unmet_requirements": 0,
+                "team_price": 33200
+            },
+            {
+                "challenge_name": "Galácticos Sencillos",
+                "unmet_requirements": 0,
+                "team_price": 228350
+            },
+            {
+                "challenge_name": "Nación Única Brasil Elite",
+                "unmet_requirements": 0,
+                "team_price": 248300
+            },
+            {
+                "challenge_name": "Icon Flash",
+                "unmet_requirements": 1,
+                "team_price": 252100
+            },
+            {
+                "challenge_name": "Multiliga Química",
+                "unmet_requirements": 0,
+                "team_price": 14100
+            },
+            {
+                "challenge_name": "Híbrido Budget",
+                "unmet_requirements": 0,
+                "team_price": 132100
+            },
+            {
+                "challenge_name": "Defensa de Hierro",
+                "unmet_requirements": 0,
+                "team_price": 6600
+            },
+            {
+                "challenge_name": "Extremos Prolíficos",
+                "unmet_requirements": 0,
+                "team_price": 37800
+            },
+            {
+                "challenge_name": "TriNación Elite",
+                "unmet_requirements": 1,
+                "team_price": 60700
+            },
+            {
+                "challenge_name": "Icon Thunder Squad",
+                "unmet_requirements": 1,
+                "team_price": 142500
+            },
+            {
+                "challenge_name": "Liga y Nación Mixta",
+                "unmet_requirements": 2,
+                "team_price": 25050
+            },
+            {
+                "challenge_name": "Héroes de Champions",
+                "unmet_requirements": 1,
+                "team_price": 197700
+            },
+            {
+                "challenge_name": "Leyendas Supremas",
+                "unmet_requirements": 2,
+                "team_price": 32100
+            },
+            {
+                "challenge_name": "Selección Épica",
+                "unmet_requirements": 0,
+                "team_price": 26800
+            },
+            {
+                "challenge_name": "Equip ofensiu",
+                "unmet_requirements": 0,
+                "team_price": 15250
+            }
+        ]
+---------------------------------- ITERACIÓ 3 ----------------------------------
+[
+            {
+                "challenge_name": "Bronce Básico",
+                "unmet_requirements": 0,
+                "team_price": 2800
+            },
+            {
+                "challenge_name": "Plata Versátil",
+                "unmet_requirements": 0,
+                "team_price": 2800
+            },
+            {
+                "challenge_name": "Liga Variada Económica",
+                "unmet_requirements": 0,
+                "team_price": 3750
+            },
+            {
+                "challenge_name": "Nación Única España",
+                "unmet_requirements": 0,
+                "team_price": 3150
+            },
+            {
+                "challenge_name": "Química Compacta",
+                "unmet_requirements": 0,
+                "team_price": 8200
+            },
+            {
+                "challenge_name": "Oro Premium",
+                "unmet_requirements": 0,
+                "team_price": 37700
+            },
+            {
+                "challenge_name": "Galácticos Sencillos",
+                "unmet_requirements": 0,
+                "team_price": 202200
+            },
+            {
+                "challenge_name": "Nación Única Brasil Elite",
+                "unmet_requirements": 0,
+                "team_price": 137800
+            },
+            {
+                "challenge_name": "Icon Flash",
+                "unmet_requirements": 1,
+                "team_price": 214700
+            },
+            {
+                "challenge_name": "Multiliga Química",
+                "unmet_requirements": 0,
+                "team_price": 5100
+            },
+            {
+                "challenge_name": "Híbrido Budget",
+                "unmet_requirements": 0,
+                "team_price": 6950
+            },
+            {
+                "challenge_name": "Defensa de Hierro",
+                "unmet_requirements": 0,
+                "team_price": 131900
+            },
+            {
+                "challenge_name": "Extremos Prolíficos",
+                "unmet_requirements": 0,
+                "team_price": 10350
+            },
+            {
+                "challenge_name": "TriNación Elite",
+                "unmet_requirements": 1,
+                "team_price": 23450
+            },
+            {
+                "challenge_name": "Icon Thunder Squad",
+                "unmet_requirements": 2,
+                "team_price": 455950
+            },
+            {
+                "challenge_name": "Liga y Nación Mixta",
+                "unmet_requirements": 1,
+                "team_price": 58650
+            },
+            {
+                "challenge_name": "Héroes de Champions",
+                "unmet_requirements": 1,
+                "team_price": 89350
+            },
+            {
+                "challenge_name": "Leyendas Supremas",
+                "unmet_requirements": 2,
+                "team_price": 41700
+            },
+            {
+                "challenge_name": "Selección Épica",
+                "unmet_requirements": 1,
+                "team_price": 18150
+            },
+            {
+                "challenge_name": "Equip ofensiu",
+                "unmet_requirements": 0,
+                "team_price": 5150
+            }
+        ]
+---------------------------------- ITERACIÓ 4 ----------------------------------
+[
+            {
+                "challenge_name": "Bronce Básico",
+                "unmet_requirements": 0,
+                "team_price": 2200
+            },
+            {
+                "challenge_name": "Plata Versátil",
+                "unmet_requirements": 0,
+                "team_price": 2700
+            },
+            {
+                "challenge_name": "Liga Variada Económica",
+                "unmet_requirements": 0,
+                "team_price": 17750
+            },
+            {
+                "challenge_name": "Nación Única España",
+                "unmet_requirements": 0,
+                "team_price": 16600
+            },
+            {
+                "challenge_name": "Química Compacta",
+                "unmet_requirements": 0,
+                "team_price": 5150
+            },
+            {
+                "challenge_name": "Oro Premium",
+                "unmet_requirements": 0,
+                "team_price": 64500
+            },
+            {
+                "challenge_name": "Galácticos Sencillos",
+                "unmet_requirements": 0,
+                "team_price": 299450
+            },
+            {
+                "challenge_name": "Nación Única Brasil Elite",
+                "unmet_requirements": 1,
+                "team_price": 158800
+            },
+            {
+                "challenge_name": "Icon Flash",
+                "unmet_requirements": 1,
+                "team_price": 191050
+            },
+            {
+                "challenge_name": "Multiliga Química",
+                "unmet_requirements": 0,
+                "team_price": 18150
+            },
+            {
+                "challenge_name": "Híbrido Budget",
+                "unmet_requirements": 0,
+                "team_price": 21650
+            },
+            {
+                "challenge_name": "Defensa de Hierro",
+                "unmet_requirements": 0,
+                "team_price": 17050
+            },
+            {
+                "challenge_name": "Extremos Prolíficos",
+                "unmet_requirements": 0,
+                "team_price": 127000
+            },
+            {
+                "challenge_name": "TriNación Elite",
+                "unmet_requirements": 1,
+                "team_price": 191600
+            },
+            {
+                "challenge_name": "Icon Thunder Squad",
+                "unmet_requirements": 1,
+                "team_price": 157500
+            },
+            {
+                "challenge_name": "Liga y Nación Mixta",
+                "unmet_requirements": 1,
+                "team_price": 27450
+            },
+            {
+                "challenge_name": "Héroes de Champions",
+                "unmet_requirements": 1,
+                "team_price": 87900
+            },
+            {
+                "challenge_name": "Leyendas Supremas",
+                "unmet_requirements": 1,
+                "team_price": 39850
+            },
+            {
+                "challenge_name": "Selección Épica",
+                "unmet_requirements": 1,
+                "team_price": 152050
+            },
+            {
+                "challenge_name": "Equip ofensiu",
+                "unmet_requirements": 0,
+                "team_price": 6100
+            }
+        ]
+---------------------------------- ITERACIÓ 5 ----------------------------------
+[
+            {
+                "challenge_name": "Bronce Básico",
+                "unmet_requirements": 0,
+                "team_price": 2650
+            },
+            {
+                "challenge_name": "Plata Versátil",
+                "unmet_requirements": 0,
+                "team_price": 2400
+            },
+            {
+                "challenge_name": "Liga Variada Económica",
+                "unmet_requirements": 0,
+                "team_price": 11250
+            },
+            {
+                "challenge_name": "Nación Única España",
+                "unmet_requirements": 0,
+                "team_price": 12850
+            },
+            {
+                "challenge_name": "Química Compacta",
+                "unmet_requirements": 0,
+                "team_price": 15500
+            },
+            {
+                "challenge_name": "Oro Premium",
+                "unmet_requirements": 0,
+                "team_price": 23400
+            },
+            {
+                "challenge_name": "Galácticos Sencillos",
+                "unmet_requirements": 0,
+                "team_price": 303500
+            },
+            {
+                "challenge_name": "Nación Única Brasil Elite",
+                "unmet_requirements": 0,
+                "team_price": 171350
+            },
+            {
+                "challenge_name": "Icon Flash",
+                "unmet_requirements": 1,
+                "team_price": 202250
+            },
+            {
+                "challenge_name": "Multiliga Química",
+                "unmet_requirements": 0,
+                "team_price": 14400
+            },
+            {
+                "challenge_name": "Híbrido Budget",
+                "unmet_requirements": 0,
+                "team_price": 6300
+            },
+            {
+                "challenge_name": "Defensa de Hierro",
+                "unmet_requirements": 0,
+                "team_price": 112300
+            },
+            {
+                "challenge_name": "Extremos Prolíficos",
+                "unmet_requirements": 0,
+                "team_price": 11000
+            },
+            {
+                "challenge_name": "TriNación Elite",
+                "unmet_requirements": 1,
+                "team_price": 25400
+            },
+            {
+                "challenge_name": "Icon Thunder Squad",
+                "unmet_requirements": 1,
+                "team_price": 73350
+            },
+            {
+                "challenge_name": "Liga y Nación Mixta",
+                "unmet_requirements": 1,
+                "team_price": 51650
+            },
+            {
+                "challenge_name": "Héroes de Champions",
+                "unmet_requirements": 1,
+                "team_price": 176850
+            },
+            {
+                "challenge_name": "Leyendas Supremas",
+                "unmet_requirements": 2,
+                "team_price": 52100
+            },
+            {
+                "challenge_name": "Selección Épica",
+                "unmet_requirements": 0,
+                "team_price": 19500
+            },
+            {
+                "challenge_name": "Equip ofensiu",
+                "unmet_requirements": 0,
+                "team_price": 14250
+            }
+        ]

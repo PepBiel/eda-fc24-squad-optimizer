@@ -1,0 +1,630 @@
+{
+  "teams": [
+    {
+      "name": "Bronce Básico",
+      "formation": "4-4-2",
+      "positions": [
+        "ST",
+        "ST",
+        "LM",
+        "CM",
+        "CM",
+        "RM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 72
+        },
+        "chemistry": {
+          "min": 6
+        }
+      }
+    },
+    {
+      "name": "Plata Versátil",
+      "formation": "4-3-3 (4)",
+      "positions": [
+        "LW",
+        "ST",
+        "RW",
+        "CM",
+        "CDM",
+        "CDM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 78
+        },
+        "chemistry": {
+          "min": 8
+        }
+      }
+    },
+    {
+      "name": "Liga Variada Económica",
+      "formation": "4-2-3-1",
+      "positions": [
+        "ST",
+        "CAM",
+        "LM",
+        "RM",
+        "CDM",
+        "CDM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 75
+        },
+        "chemistry": {
+          "min": 10
+        },
+        "leagues": {
+          "exact": 6,
+          "player_max": 3
+        }
+      }
+    },
+    {
+      "name": "Nación Única España",
+      "formation": "4-4-2",
+      "positions": [
+        "ST",
+        "ST",
+        "LM",
+        "CM",
+        "CM",
+        "RM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 74
+        },
+        "chemistry": {
+          "min": 7
+        },
+        "nationalities": {
+          "min": [
+              {
+                  "name": "Spain",
+                  "number": 11
+              }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Química Compacta",
+      "formation": "3-5-2",
+      "positions": [
+        "ST",
+        "ST",
+        "CAM",
+        "LM",
+        "RM",
+        "CM",
+        "CM",
+        "CB",
+        "CB",
+        "CB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 76
+        },
+        "chemistry": {
+          "min": 18,
+          "player_min": 1
+        }
+      }
+    },
+    {
+      "name": "Oro Premium",
+      "formation": "4-3-3",
+      "positions": [
+        "LW",
+        "ST",
+        "RW",
+        "CM",
+        "CM",
+        "CM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 85
+        },
+        "chemistry": {
+          "min": 12
+        }
+      }
+    },
+    {
+      "name": "Galácticos Sencillos",
+      "formation": "4-4-2 (2)",
+      "positions": [
+        "ST",
+        "ST",
+        "LM",
+        "CDM",
+        "CDM",
+        "RM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 88
+        },
+        "chemistry": {
+          "min": 8
+        }
+      }
+    },
+    {
+      "name": "Nación Única Brasil Elite",
+      "formation": "4-3-3 (2)",
+      "positions": [
+        "LW",
+        "ST",
+        "RW",
+        "CM",
+        "CAM",
+        "CDM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 86
+        },
+        "chemistry": {
+          "min": 10
+        },
+        "nationalities": {
+          "exact": 2
+        }
+      }
+    },
+    {
+      "name": "Icon Flash",
+      "formation": "4-2-2-2",
+      "positions": [
+        "ST",
+        "ST",
+        "LM",
+        "RM",
+        "CDM",
+        "CDM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 89
+        },
+        "chemistry": {
+          "min": 11
+        },
+        "versions": {
+          "min": [
+            {
+              "name": "Icon",
+              "number": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Multiliga Química",
+      "formation": "4-2-3-1",
+      "positions": [
+        "ST",
+        "ST",
+        "CAM",
+        "LM",
+        "RM",
+        "CDM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 78
+        },
+        "chemistry": {
+          "min": 22
+        },
+        "leagues": {
+          "exact": 8,
+          "player_max": 2
+        }
+      }
+    },
+    {
+      "name": "Híbrido Budget",
+      "formation": "4-3-1-2",
+      "positions": [
+        "ST",
+        "ST",
+        "CAM",
+        "CM",
+        "CM",
+        "CM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 80
+        },
+        "chemistry": {
+          "min": 25
+        },
+        "nationalities": {
+          "min": [
+            {
+              "name": "Argentina",
+              "number": 1
+            },
+            {
+              "name": "Italy",
+              "number": 1
+            },
+            {
+              "name": "Germany",
+              "number": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Defensa de Hierro",
+      "formation": "5-3-2",
+      "positions": [
+        "ST",
+        "ST",
+        "CM",
+        "CM",
+        "CM",
+        "LWB",
+        "RWB",
+        "CB",
+        "CB",
+        "CB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 82
+        },
+        "chemistry": {
+          "min": 18
+        },
+        "clubs": {
+          "player_max": 2
+        }
+      }
+    },
+    {
+      "name": "Extremos Prolíficos",
+      "formation": "3-4-3",
+      "positions": [
+        "LW",
+        "ST",
+        "RW",
+        "LM",
+        "CM",
+        "CM",
+        "RM",
+        "CB",
+        "CB",
+        "CB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 80
+        },
+        "chemistry": {
+          "min": 23
+        },
+        "nationalities": {
+          "min": [
+            {
+              "name": "France",
+              "number": 2
+            },
+            {
+              "name": "Spain",
+              "number": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "TriNación Elite",
+      "formation": "4-3-3 (3)",
+      "positions": [
+        "LW",
+        "ST",
+        "RW",
+        "CM",
+        "CM",
+        "CM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 88
+        },
+        "chemistry": {
+          "min": 25
+        },
+        "nationalities": {
+          "exact": 3,
+          "player_max": 4
+        }
+      }
+    },
+    {
+      "name": "Icon Thunder Squad",
+      "formation": "4-2-3-1",
+      "positions": [
+        "ST",
+        "CAM",
+        "LM",
+        "RM",
+        "CAM",
+        "CDM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 85
+        },
+        "chemistry": {
+          "min": 27
+        },
+        "versions": {
+          "min": [
+            {
+              "name": "Icon",
+              "number": 2
+            },
+            {
+              "name": "Thunderstruck",
+              "number": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Liga y Nación Mixta",
+      "formation": "4-5-1",
+      "positions": [
+        "ST",
+        "LM",
+        "CM",
+        "CM",
+        "CM",
+        "RM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 86
+        },
+        "chemistry": {
+          "min": 26
+        },
+        "leagues": {
+          "exact": 2,
+          "player_max": 6
+        },
+        "nationalities": {
+          "exact": 5,
+          "player_max": 3
+        }
+      }
+    },
+    {
+      "name": "Héroes de Champions",
+      "formation": "4-3-3 (5)",
+      "positions": [
+        "LW",
+        "ST",
+        "RW",
+        "CM",
+        "CDM",
+        "CDM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 87
+        },
+        "chemistry": {
+          "min": 20
+        },
+        "versions": {
+          "min": [
+            {
+              "name": "Dynamic Duos",
+              "number": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Leyendas Supremas",
+      "formation": "4-3-3 (2)",
+      "positions": [
+        "LW",
+        "ST",
+        "RW",
+        "CM",
+        "CM",
+        "CDM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 84
+        },
+        "chemistry": {
+          "min": 10
+        },
+        "versions": {
+          "min": [
+            {
+              "name": "Dynamic Duos",
+              "number": 2
+            }
+          ]
+        },
+        "nationalities": {
+          "exact": 2,
+          "player_max": 6
+        },
+        "leagues": {
+          "exact": 3,
+          "player_max": 4
+        }
+      }
+    },
+    {
+      "name": "Selección Épica",
+      "formation": "4-3-1-2",
+      "positions": [
+        "ST",
+        "ST",
+        "CAM",
+        "CM",
+        "CM",
+        "CM",
+        "LB",
+        "CB",
+        "CB",
+        "RB",
+        "GK"
+      ],
+      "requirements": {
+        "average": {
+          "min": 80
+        },
+        "chemistry": {
+          "min": 30
+        },
+        "nationalities": {
+          "min": [
+            {
+              "name": "Argentina",
+              "number": 2
+            },
+            {
+              "name": "Portugal",
+              "number": 2
+            },
+            {
+              "name": "France",
+              "number": 2
+            },
+            {
+              "name": "Brazil",
+              "number": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Equip ofensiu",
+      "formation": "3-4-3",
+      "image": "sbc5.png",
+      "positions": [
+          "LW", "ST", "RW", "LM", "CM", "CM", "RM", "CB", "CB", "CB", "GK"
+      ],
+      "requirements": {
+        "average": {
+            "min": 78
+        },
+        "chemistry": {
+            "player_min": 1,
+            "min": 18
+        },
+        "leagues": {
+            "exact": 7,
+            "player_max": 3
+        },
+        "clubs": {
+            "player_max": 3
+        }
+      }
+    }
+  ]
+}

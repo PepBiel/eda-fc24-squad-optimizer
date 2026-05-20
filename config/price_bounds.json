@@ -1,0 +1,13 @@
+{
+  "club": {
+    "min_team_price": 0,
+    "max_team_price": 721050,
+    "source": "Calculated from data/players/jugadores.json as the sum of the 11 highest player prices."
+  },
+  "bd": {
+    "min_team_price": 0,
+    "max_team_price": 41430000,
+    "source": "Replicates the original max_team_price_db query over fc24_futbinstats.sql: WHERE price LIKE '%M%' ORDER BY price DESC LIMIT 11, then normalizes strings such as 5.8M."
+  }
+}
+
