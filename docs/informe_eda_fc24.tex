@@ -1,19 +1,31 @@
 \documentclass[10pt,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla]{babel}
 \usepackage{geometry}
 \usepackage{booktabs}
+\usepackage{tabularx}
 \usepackage{array}
 \usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{titlesec}
 \usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{caption}
 
-\geometry{margin=1.45cm}
-\renewcommand{\baselinestretch}{0.97}
+\geometry{margin=1.7cm}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.26em}
+\setlist[itemize]{topsep=0.1em,itemsep=0.05em,leftmargin=1.2em}
+\setlist[enumerate]{topsep=0.1em,itemsep=0.05em,leftmargin=1.3em}
+% \titlespacing*{\section}{0pt}{0.52em}{0.22em}
+% \titlespacing*{\subsection}{0pt}{0.34em}{0.12em}
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.45em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.45em}{}
+\captionsetup{font=footnotesize,labelfont=bf,skip=2pt}
 \hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=black}
 \renewcommand{\refname}{Referencias}
-\renewcommand{\tablename}{Tabla}
 
 \title{\vspace{-1.0cm}\textbf{Aplicación de EDAs a la optimización de plantillas SBC en FC24}\vspace{-0.45cm}}
 \author{Josep Gabriel Fornes Reynes}
@@ -27,7 +39,7 @@
 
 Este trabajo parte de un TFG previo sobre \textbf{FC24 Ultimate Team}, donde se resolvían desafíos de creación de plantillas (SBC/DCP) mediante técnicas evolutivas \cite{fornes2025}. Cada desafío consiste en formar una plantilla de 11 jugadores que cumpla restricciones como media mínima, química, nacionalidades, ligas, clubes, número máximo de jugadores por grupo o versiones especiales de carta. Además, interesa minimizar el precio, ya que los jugadores entregados en un SBC se pierden.
 
-En el TFG original el problema se resolvía con un algoritmo genético (GA): cada individuo era una plantilla completa; la población se evaluaba con una función de \textit{fitness}; y se aplicaban selección, cruce, mutación y elitismo. El objetivo de este trabajo es estudiar si un algoritmo de estimación de distribuciones (EDA), concretamente UMDA categórico, puede mejorar ese baseline. Se elige UMDA porque el problema puede formularse como una selección de variables categóricas: en cada posición de la plantilla se escoge una carta. Los EDAs sustituyen los operadores clásicos de recombinación por el aprendizaje de un modelo probabilístico a partir de las mejores soluciones, desde el que después se muestrean nuevas soluciones \cite{muhlenbein1996,larranaga2012}.
+En el TFG original el problema se resolvía con un algoritmo genético (GA): cada individuo era una plantilla completa; la población se evaluaba con una función de \textit{fitness}; y se aplicaban selección, cruce, mutación y elitismo. El objetivo de este trabajo es estudiar si un algoritmo de estimación de distribuciones (EDA), concretamente UMDA categórico, puede mejorar ese baseline. Los EDAs sustituyen los operadores clásicos de recombinación por el aprendizaje de un modelo probabilístico a partir de las mejores soluciones, desde el que después se muestrean nuevas soluciones \cite{muhlenbein1996,larranaga2012}.
 
 Cada solución se representa como
 \[
@@ -45,7 +57,7 @@ Se conservan los dos modos del TFG: \textbf{club} y \textbf{BD}. La diferencia n
 
 También se mantiene la lógica original de posiciones: un jugador puede ocupar un slot que no corresponda a su posición natural, pero entonces su química es cero. Esto es importante porque algunos SBC no requieren química alta y, en esos casos, filtrar por posición podría eliminar soluciones válidas y baratas. Sin embargo, cuando el reto exige química, la compatibilidad posicional vuelve a ser decisiva.
 
-El protocolo usa los mismos 20 desafíos del TFG y cinco semillas por configuración, dando 100 ejecuciones por variante. La fiabilidad se calcula como requisitos cumplidos sobre el total de requisitos evaluados en esas ejecuciones (380). También se registra el coste medio de la mejor plantilla encontrada y el tiempo medio de ejecución. El GA se toma como baseline histórico y no se modifica ni en sus operadores ni en su función de \textit{fitness}. Esta decisión evita que la comparación se desplace hacia un nuevo GA y permite centrar el trabajo en el efecto de introducir un EDA. Por ello, los tiempos no se comparan contra el GA, solo entre variantes UMDA ejecutadas en el nuevo repositorio.
+El protocolo usa los mismos 20 desafíos del TFG y cinco semillas por configuración, dando 100 ejecuciones por variante. La fiabilidad se calcula como requisitos cumplidos sobre el total de requisitos evaluados en esas ejecuciones (380). También se registra el coste medio de la mejor plantilla encontrada y el tiempo medio de ejecución. El GA se toma como baseline histórico; por ello, los tiempos no se comparan contra él, solo entre variantes UMDA ejecutadas en el nuevo repositorio.
 
 \section{Fase 1: sustitución directa por UMDA}
 
@@ -102,17 +114,41 @@ La Tabla~\ref{tab:final} muestra que UMDA estructurado mejora claramente. En mod
 
 \section{Diagnóstico y discusión}
 
-La mejora de UMDA estructurado no resuelve todos los retos. Los fallos restantes se concentran en desafíos con media mínima alta, restricciones exactas de nacionalidad/liga o versiones escasas, como \textit{Dynamic Duos}. En modo \textbf{club} destacan retos como \textit{Icon Flash}, \textit{TriNación Elite}, \textit{Liga y Nación Mixta} o \textit{Leyendas Supremas}. En modo \textbf{BD}, al pesar menos el coste, algunos retos mejoran, pero siguen apareciendo fallos de media, química alta o cartas especiales.
+La mejora de UMDA estructurado no resuelve todos los retos. Los fallos restantes se concentran en desafíos con media mínima alta, restricciones exactas de nacionalidad/liga o versiones muy escasas, como \textit{Dynamic Duos}. En modo \textbf{club} destacan retos como \textit{Icon Flash}, \textit{TriNación Elite}, \textit{Liga y Nación Mixta} o \textit{Leyendas Supremas}. En modo \textbf{BD}, al pesar menos el coste, algunos retos mejoran, pero siguen apareciendo fallos de media, química alta o cartas especiales.
 
 Para separar el efecto del precio de la dificultad propia de los requisitos, se ejecutó UMDA estructurado sin penalización de coste en la \textit{fitness}. El resultado fue 350/380 requisitos cumplidos, con una fiabilidad del 92,11\% y un coste medio de 113.038,50 monedas. Se resolvieron completamente 16 de los 20 retos; los cuatro restantes quedaron a un requisito pendiente: media mínima en \textit{Icon Flash}, \textit{Liga y Nación Mixta} y \textit{TriNación Elite}, y dos cartas \textit{Dynamic Duos} en \textit{Leyendas Supremas}. Esto sugiere que parte de los errores venían del compromiso coste-requisitos, pero que también existen restricciones combinatorias difíciles con el dataset disponible.
 
-La lectura principal es doble. Primero, UMDA directo no supera al GA porque el problema tiene dependencias fuertes entre jugadores y UMDA aprende marginales independientes. Segundo, UMDA estructurado sí mejora porque reduce el espacio de búsqueda y aumenta la señal estadística: el algoritmo ya no debe descubrir desde cero qué jugadores son razonables para cada slot o reto. Por tanto, la conclusión no es que ``UMDA gana al GA'' de forma automática, sino que un EDA puede ser competitivo si el problema se codifica de forma adecuada para el aprendizaje probabilístico.
+La lectura principal es doble. Primero, UMDA directo no supera al GA porque el problema tiene dependencias fuertes entre jugadores y UMDA aprende marginales independientes. Segundo, UMDA estructurado sí mejora porque reduce el espacio de búsqueda y aumenta la señal estadística: el algoritmo ya no debe descubrir desde cero qué jugadores son razonables para cada slot o reto. Por tanto, no debe afirmarse simplemente que ``UMDA gana al GA'', sino que un EDA puede ser competitivo si el problema se codifica de forma adecuada para el aprendizaje probabilístico.
 
 \section{Limitaciones y trabajo futuro}
 
-La principal limitación es que el GA se usa como baseline histórico. No se ha reejecutado dentro del nuevo repositorio ni se ha probado con la misma representación estructurada, por lo que no se puede separar completamente el efecto del algoritmo y el efecto de la reducción del dominio. Además, los tiempos solo son comparables entre variantes UMDA. Otra limitación es que no se han probado EDAs multivariantes; modelos capaces de aprender dependencias entre slots podrían ajustarse mejor a requisitos de química, ligas y nacionalidades \cite{larranaga2012}.
+La principal limitación es que el GA se usa como baseline histórico. No se ha reejecutado dentro del nuevo repositorio ni se ha probado con la misma representación estructurada, por lo que no se puede separar completamente el efecto del algoritmo y el efecto de la reducción del dominio. Además, los tiempos solo son comparables entre variantes UMDA. Otra limitación es que no se han probado EDAs multivariantes; modelos capaces de aprender dependencias entre slots podrían ajustarse mejor a requisitos de química, ligas y nacionalidades, tal como se plantea en la literatura sobre modelos probabilísticos en computación evolutiva \cite{larranaga2012}.
 
-Como próximos pasos, sería conveniente reejecutar el GA en el nuevo entorno, aplicar dominios estructurados también al GA, probar un EDA multivariante y analizar la sensibilidad a \texttt{domain\_size}, \texttt{size\_gen} y \texttt{max\_iter}. Estos experimentos permitirían distinguir si la mejora procede del algoritmo probabilístico, del filtrado de candidatos o de la combinación de ambos factores. Para asegurar la reproducibilidad, el repositorio conserva los datos, los CSV de resultados y los parámetros principales de ejecución.
+Como próximos pasos, sería conveniente: (i) reejecutar el GA en el nuevo entorno; (ii) aplicar dominios estructurados también al GA; (iii) probar un EDA multivariante, por ejemplo basado en redes bayesianas; (iv) añadir una reparación inteligente o búsqueda local tras el muestreo para corregir media, química o cartas especiales; y (v) analizar la sensibilidad a \texttt{domain\_size}, \texttt{size\_gen} y \texttt{max\_iter}. Estos experimentos permitirían distinguir si la mejora procede del algoritmo probabilístico, del filtrado de candidatos o de la combinación de ambos factores.
+
+
+
+Además, la comparación debe interpretarse en dos niveles. La fase directa evalúa el cambio de operador evolutivo manteniendo una codificación casi idéntica a la del GA. La fase estructurada evalúa una versión más propia de un EDA, donde se reduce el dominio de cada variable antes de estimar la distribución. Esta segunda fase no invalida la primera: ambas son necesarias. La primera muestra la limitación del modelo univariante; la segunda muestra que, al introducir conocimiento del problema en la representación, el aprendizaje probabilístico se vuelve útil.
+
+También conviene distinguir entre mejorar la fiabilidad y mejorar el coste. En modo \textbf{club}, UMDA estructurado mejora mucho el cumplimiento de requisitos, pero no consigue ser más barato que el GA histórico. En modo \textbf{BD}, en cambio, mejora tanto la fiabilidad como el coste medio. Esto se explica porque en BD el coste tiene menos peso relativo y el algoritmo puede priorizar combinaciones válidas sin quedar tan penalizado por usar cartas algo más caras. El experimento sin precio confirma esta interpretación: cuando el coste desaparece de la \textit{fitness}, la fiabilidad sube hasta el 92,11\%, pero el precio medio aumenta notablemente.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{p{0.28\linewidth}p{0.62\linewidth}}
+\toprule
+Aspecto observado & Interpretación \\
+\midrule
+UMDA directo pierde frente al GA & El dominio completo es demasiado amplio para un modelo univariante. \\
+UMDA estructurado mejora & Los dominios locales introducen señal útil y reducen evaluaciones poco prometedoras. \\
+BD mejora el equilibrio coste-requisitos & El coste queda normalizado con una referencia mayor y penaliza menos. \\
+Persisten fallos de media y cartas especiales & Algunas restricciones requieren combinaciones muy concretas o cartas escasas. \\
+\bottomrule
+\end{tabular}
+\caption{Lectura metodológica de los resultados obtenidos.}
+\label{tab:interpretacion}
+\end{table}
+
+Desde el punto de vista de reproducibilidad, el repositorio debe conservar los ficheros de datos usados en los experimentos, los resultados agregados y los parámetros principales de ejecución. En particular, es importante documentar el tamaño del dominio local, el número de generaciones, el tamaño de población, las semillas y el modo de precio. Sin esta información, una mejora de fiabilidad podría deberse a una configuración distinta y no al cambio metodológico. Para una entrega académica, lo más claro es acompañar la memoria con el código, los CSV de resultados y un README que indique cómo regenerar las tablas.
 
 \section{Conclusión}
 
