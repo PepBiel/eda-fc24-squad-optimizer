@@ -213,7 +213,7 @@ Lectura inicial:
 - UMDA BD obtiene un precio medio ligeramente inferior: 76,819.50 frente a 77,501.50.
 - La mejora en coste no compensa la perdida de fiabilidad con esta configuracion.
 
-## Comparacion Final
+## Comparacion Fase 1
 
 | Comparacion | Fiabilidad GA | Fiabilidad UMDA | Diferencia | Precio medio GA | Precio medio UMDA | Diferencia |
 |---|---:|---:|---:|---:|---:|---:|
@@ -227,48 +227,231 @@ Conclusion de la comparacion estricta:
 - En modo `bd`, UMDA reduce ligeramente el coste medio, pero pierde bastante fiabilidad.
 - Estos resultados son validos como experimento inicial porque comparan ambos enfoques bajo una formulacion equivalente y reproducible.
 
-## Validez Para el Seminario
+## Problema Detectado
 
-Estos resultados pueden servir como resultados finales de una primera parte del trabajo:
+La fase 1 muestra que sustituir el GA por UMDA sin modificar la representacion no es suficiente. El motivo principal esta en el espacio de busqueda que recibe UMDA.
 
-- Se ha implementado UMDA sobre el mismo problema que el GA.
-- Se han usado los mismos retos, semillas controladas y numero de ejecuciones.
-- Se han mantenido las restricciones relevantes del GA, incluida la unicidad por `name`.
-- El resultado negativo tambien es defendible: aplicar EDA directamente no garantiza mejorar un GA ya adaptado al problema.
+En la fase 1, cada una de las 11 variables de la plantilla podia elegir cualquier jugador del JSON:
 
-Para una demostracion mas fuerte, conviene plantear una segunda fase:
+```text
+slot 1 -> cualquier jugador
+slot 2 -> cualquier jugador
+...
+slot 11 -> cualquier jugador
+```
 
-- Fase 1: comparacion justa, misma estructura, UMDA no mejora al GA.
-- Fase 2: reformulacion orientada a EDA, donde se modifica la estructura de busqueda para que el modelo probabilistico tenga informacion mas util.
+Esto era una comparacion justa, pero no una representacion favorable para UMDA. UMDA aprende probabilidades por variable. Si cada variable puede tomar cualquier jugador del dataset, la distribucion inicial es demasiado dispersa y la senal util llega tarde.
 
-La segunda fase no deberia presentarse como la misma comparacion, sino como una mejora metodologica: "cuando adaptamos la representacion al tipo de algoritmo, EDA puede explotar mejor el problema".
+Por ejemplo, para un slot `GK`, el algoritmo tambien podia probar delanteros, mediocentros o defensas. La funcion de fitness penaliza esas soluciones, pero la evaluacion ya se ha desperdiciado. Lo mismo ocurre con retos como `Nacion Unica Espana`: si el reto pide jugadores espanoles, UMDA parte igualmente de todo el JSON y descubre el requisito solo despues de evaluar soluciones malas.
 
-## Linea de Mejora Propuesta
+El GA tolera mejor esta representacion amplia porque explora mediante cruce, mutacion y seleccion. UMDA necesita dominios categoricos mas informativos para que el aprendizaje probabilistico sea util.
 
-La debilidad principal de la representacion actual es que cada posicion puede elegir cualquier jugador del JSON. El dominio de cada variable es demasiado grande y poco informado. UMDA aprende probabilidades por slot, pero parte de una busqueda muy dispersa.
+Un matiz importante: el requisito de media minima no solo penaliza cuando se queda por debajo. En el score de fitness se usa una desviacion absoluta respecto al minimo, asi que alejarse demasiado por arriba tambien empeora la puntuacion. Lo que no cambia es el conteo de `unmet_requirements`: ahi solo suma si la media queda por debajo del minimo.
 
-Una variante mas favorable para EDA seria:
+## Arquitectura Fase 2
 
-- reducir el dominio de cada slot con candidatos compatibles por posicion o semi-compatibles;
-- mantener una cuota de jugadores fuera de posicion para no romper la logica original de quimica;
-- construir dominios por reto, filtrando por requisitos relevantes como rareza, liga, nacion, club, media minima o tipo de carta;
-- usar una poblacion inicial heuristica, no completamente uniforme;
-- mantener la reparacion de nombres duplicados;
-- comparar esta variante como `umda_guided` o `umda_structured`, no como sustituto del baseline.
+La variante implementada para la fase 2 se llama `umda_structured`.
 
-Esta linea permitiria contar una historia experimental clara:
+La idea es mantener la misma evaluacion, los mismos retos y las mismas restricciones, pero cambiar la forma en que UMDA ve el espacio de busqueda.
 
-1. UMDA directo sobre el problema original no supera al GA.
-2. El motivo probable es la representacion: demasiadas categorias y poca estructura para aprender dependencias utiles.
-3. Al introducir conocimiento del dominio en la generacion de candidatos, EDA deberia mejorar fiabilidad, coste o ambas.
-4. La mejora se puede atribuir a una formulacion mas adecuada para EDA, no a una comparacion injusta.
+Antes:
+
+```text
+ST -> todos los jugadores
+CM -> todos los jugadores
+CB -> todos los jugadores
+GK -> todos los jugadores
+```
+
+Ahora:
+
+```text
+ST -> dominio local de candidatos para ST
+CM -> dominio local de candidatos para CM
+CB -> dominio local de candidatos para CB
+GK -> dominio local de candidatos para GK
+```
+
+Cada dominio local se construye por slot y por reto:
+
+- cada slot usa un dominio local de candidatos, no todo el JSON;
+- el dominio prioriza jugadores compatibles con la posicion del slot;
+- se reserva una parte del dominio para jugadores fuera de posicion;
+- se priorizan jugadores alineados con requisitos del reto, como nacion, liga, club, version y media;
+- la distribucion inicial de UMDA no es uniforme, sino sesgada hacia los candidatos mejor ordenados;
+- se mantiene la reparacion de nombres duplicados dentro de plantilla.
+
+Esto no cambia que una solucion sea valida o no. Solo cambia que UMDA empieza buscando en una zona mas razonable.
+
+### Que No Cambia
+
+No cambia:
+
+- la funcion de fitness;
+- el calculo de quimica;
+- el calculo de precio;
+- las restricciones de los SBC;
+- los datos de jugadores;
+- la regla de no repetir `name` dentro de una plantilla;
+- la estructura de 11 slots;
+- el uso de `UMDAcat`.
+
+### Que Cambia
+
+Cambia la representacion usada por UMDA:
+
+```text
+UMDA fase 1:
+cada slot tiene como dominio todos los jugadores
+
+UMDA structured:
+cada slot tiene un dominio local de 150 candidatos priorizados
+```
+
+La fase 2 no debe interpretarse como la misma comparacion que la fase 1. La lectura correcta es metodologica:
+
+```text
+Primero se aplica UMDA directamente y no mejora al GA.
+Despues se adapta la representacion al funcionamiento de un EDA.
+Con una representacion mas informativa, UMDA si mejora.
+```
+
+## Resultados Fase 2
+
+Configuracion usada:
+
+```text
+algorithm: umda_structured
+seeds: 0 1 2 3 4
+retos: 20
+ejecuciones por modo: 100
+max_iter: 100
+size_gen: 100
+domain_size: 150
+```
+
+| Algoritmo | Modo | Runs | Requisitos | Cumplidos | Fiabilidad | Precio medio | Mediana precio | Precio maximo | Runtime medio |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| UMDA structured | club | 100 | 380 | 342 | 90.00% | 25,956.50 | 5,975.00 | 265,600.00 | 1.78s |
+| UMDA structured | bd | 100 | 380 | 348 | 91.58% | 66,450.00 | 23,100.00 | 336,450.00 | 1.76s |
+
+### Comparacion Global
+
+| Modo | GA fiabilidad | UMDA baseline fiabilidad | UMDA structured fiabilidad | Mejor resultado |
+|---|---:|---:|---:|---|
+| club | 84.74% | 81.05% | 90.00% | UMDA structured |
+| bd | 89.21% | 82.37% | 91.58% | UMDA structured |
+
+| Modo | GA precio medio | UMDA baseline precio medio | UMDA structured precio medio | Mejor resultado |
+|---|---:|---:|---:|---|
+| club | 23,788.00 | 29,517.00 | 25,956.50 | GA |
+| bd | 77,501.50 | 76,819.50 | 66,450.00 | UMDA structured |
+
+| Modo | UMDA baseline runtime medio | UMDA structured runtime medio | Reduccion |
+|---|---:|---:|---:|
+| club | 22.91s | 1.78s | -92.22% |
+| bd | 24.39s | 1.76s | -92.79% |
+
+### Lectura de Resultados
+
+En modo `club`, `umda_structured` mejora la fiabilidad del GA: 90.00% frente a 84.74%. El coste medio queda por encima del GA, pero por debajo de UMDA baseline. Por tanto, en `club` la mejora principal es fiabilidad y tiempo, no coste absoluto.
+
+En modo `bd`, `umda_structured` mejora todos los criterios principales: 91.58% de fiabilidad frente a 89.21% del GA, precio medio de 66,450.00 frente a 77,501.50, y runtime medio muy inferior al UMDA baseline.
+
+La mejora frente a UMDA baseline es clara en ambos modos:
+
+- `club`: de 308/380 a 342/380 requisitos cumplidos.
+- `bd`: de 313/380 a 348/380 requisitos cumplidos.
+- `club`: coste medio baja de 29,517.00 a 25,956.50.
+- `bd`: coste medio baja de 76,819.50 a 66,450.00.
+- el runtime medio baja de unos 23-24 segundos a menos de 2 segundos por ejecucion.
+
+Por semillas, el resultado tambien es estable. En `club`, `umda_structured` se mueve entre 88.16% y 90.79%. En `bd`, se mueve entre 90.79% y 93.42%. No depende de una unica semilla excepcional.
+
+Los retos mas dificiles siguen siendo los que combinan requisitos fuertes de version, nacion, quimica o media alta. En `club`, destacan como pendientes `Galacticos Sencillos`, `Heroes de Champions`, `Icon Flash`, `Nacion Unica Brasil Elite` y `TriNacion Elite`. En `bd`, los mas dificiles son `Icon Flash`, `TriNacion Elite`, `Leyendas Supremas` y `Nacion Unica Brasil Elite`.
+
+En la media, los resultados quedan muy cerca del minimo requerido:
+
+| Modo | UMDA baseline gap medio | UMDA structured gap medio |
+|---|---:|---:|
+| club | -1.03 | -0.71 |
+| bd | -0.49 | -0.12 |
+
+El gap es `overall - media_minima`. Valores cercanos a cero indican que el algoritmo aprende a no alejarse demasiado del umbral. Esto encaja con la funcion de fitness: acercarse demasiado por arriba tambien penaliza, asi que la solucion optima suele vivir cerca del minimo, no muy por encima.
+
+## Diagnostico Sin Precio
+
+Para comprobar si algunos fallos vienen del coste o de la dificultad real de los requisitos, se ejecuto una variante sin penalizacion de precio. Esta prueba mantiene los requisitos del desafio, pero anula el termino de coste de la fitness:
+
+```bash
+python scripts/run_comparison.py --algorithm umda_structured --mode club --seeds 0 1 2 3 4 --max-iter 100 --size-gen 100 --domain-size 150 --ignore-price --output results/raw/umda_structured_no_price_club_100x100_d150.csv
+```
+
+```bash
+python scripts/run_comparison.py --algorithm umda_structured --mode bd --seeds 0 1 2 3 4 --max-iter 100 --size-gen 100 --domain-size 150 --ignore-price --output results/raw/umda_structured_no_price_bd_100x100_d150.csv
+```
+
+Despues se genero un informe por reto:
+
+```bash
+python scripts/build_feasibility_report.py --include-raw results/raw/umda_structured_no_price_club_100x100_d150.csv results/raw/umda_structured_no_price_bd_100x100_d150.csv --output results/summary/feasibility_no_price_summary.csv
+```
+
+Resultado global:
+
+| Algoritmo | Modo | Runs | Requisitos | Cumplidos | Fiabilidad | Precio medio | Runtime medio |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| UMDA structured no price | club | 100 | 380 | 350 | 92.11% | 113,038.50 | 2.10s |
+| UMDA structured no price | bd | 100 | 380 | 350 | 92.11% | 113,038.50 | 2.09s |
+
+Al ignorar precio, ambos modos dan el mismo resultado porque la diferencia `club`/`bd` solo afecta a la normalizacion del coste. La fiabilidad sube respecto a `umda_structured`, lo que indica que parte de los fallos anteriores venian del compromiso entre cumplir requisitos y mantener precio bajo.
+
+El informe encontro una solucion completa en 16 de los 20 retos. En los 4 restantes, el mejor intento quedo a un solo requisito:
+
+| Reto | Mejor resultado | Requisito pendiente |
+|---|---:|---|
+| Icon Flash | 2/3 | `average.min:89` |
+| Leyendas Supremas | 6/7 | `versions.min:Dynamic Duos:2` |
+| Liga y Nacion Mixta | 5/6 | `average.min:86` |
+| TriNacion Elite | 3/4 | `average.min:88` |
+
+Esto no demuestra que esos retos sean imposibles de forma matematica. Demuestra que, con el dataset actual, la regla de no repetir nombre y la configuracion `100x100_d150`, el algoritmo no encontro una plantilla completa incluso cuando el precio dejo de importar. Para afirmar imposibilidad estricta haria falta una busqueda exacta o un modelo de satisfaccion de restricciones.
+
+La lectura practica es que los fallos restantes no parecen depender principalmente del precio. En tres de los cuatro retos pendientes, el obstaculo es alcanzar una media muy alta manteniendo las demas restricciones. En `Leyendas Supremas`, el obstaculo detectado es encontrar dos cartas `Dynamic Duos` compatibles con el resto del reto.
+
+## Conclusion Para el Seminario
+
+La historia experimental queda cerrada en dos fases:
+
+1. Fase 1: UMDA directo sobre la formulacion original no mejora al GA. Esto demuestra que cambiar el algoritmo sin adaptar la representacion no es suficiente.
+2. Fase 2: al estructurar los dominios de busqueda por posicion y requisitos del reto, UMDA mejora claramente. Esto demuestra que los EDA dependen mucho de una representacion adecuada del problema.
+
+La conclusion principal no es simplemente que "EDA gana", sino que:
+
+```text
+EDA puede mejorar al GA cuando el problema se formula de forma adecuada para el aprendizaje probabilistico.
+```
+
+Esta conclusion es mas solida que presentar solo una tabla de resultados, porque explica por que la primera version fallaba y por que la segunda version mejora.
 
 ## Reproducibilidad
 
-Para regenerar la tabla final:
+Para regenerar la tabla de fase 1:
 
 ```bash
 python scripts/build_report_tables.py --include-raw results/raw/umda_club_final.csv results/raw/umda_bd_final.csv
+```
+
+Para regenerar la tabla completa con fase 1 y fase 2:
+
+```bash
+python scripts/build_report_tables.py --include-raw results/raw/umda_club_final.csv results/raw/umda_bd_final.csv results/raw/umda_structured_club_100x100_d150.csv results/raw/umda_structured_bd_100x100_d150.csv
+```
+
+Para regenerar la tabla completa incluyendo el diagnostico sin precio:
+
+```bash
+python scripts/build_report_tables.py --include-raw results/raw/umda_club_final.csv results/raw/umda_bd_final.csv results/raw/umda_structured_club_100x100_d150.csv results/raw/umda_structured_bd_100x100_d150.csv results/raw/umda_structured_no_price_club_100x100_d150.csv results/raw/umda_structured_no_price_bd_100x100_d150.csv
 ```
 
 Salida:

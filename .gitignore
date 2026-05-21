@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+pytest-cache-files-*/
 .venv/
 venv/
 .env
@@ -21,7 +22,15 @@ results/raw/*.csv
 *.pt
 *.onnx
 
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+
+/informe_eda_fc24.pdf
+
 Treball_Final_de_Grau_vFinal2.pdf
 
 plan_trabajo_eda_fc24_v3.md
-

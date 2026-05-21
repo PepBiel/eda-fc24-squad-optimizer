@@ -271,6 +271,47 @@ def calculate_fitness(
     return requirement_score, unmet_requirements
 
 
+def explain_unmet_requirements(
+    team_info: dict[str, Any],
+    requirements: dict[str, Any],
+) -> list[str]:
+    """Return stable labels for the requirements that are not satisfied."""
+
+    unmet: list[str] = []
+
+    average_req = requirements.get("average", {})
+    chemistry_req = requirements.get("chemistry", {})
+    nationalities_req = requirements.get("nationalities", {})
+    clubs_req = requirements.get("clubs", {})
+    leagues_req = requirements.get("leagues", {})
+    versions_req = requirements.get("versions", {})
+
+    min_avg = average_req.get("min")
+    if min_avg is not None and team_info["overall"] < min_avg:
+        unmet.append(f"average.min:{min_avg}")
+
+    unmet.extend(_explain_min_max_scalar("chemistry", team_info["team_chemistry"], chemistry_req))
+
+    player_min_chem = chemistry_req.get("player_min")
+    if player_min_chem is not None and any(
+        player["chemistry"] < player_min_chem for player in team_info["players_chemistry"]
+    ):
+        unmet.append(f"chemistry.player_min:{player_min_chem}")
+
+    player_max_chem = chemistry_req.get("player_max")
+    if player_max_chem is not None and any(
+        player["chemistry"] > player_max_chem for player in team_info["players_chemistry"]
+    ):
+        unmet.append(f"chemistry.player_max:{player_max_chem}")
+
+    unmet.extend(_explain_group_requirements("nationalities", team_info["nationalities"], nationalities_req))
+    unmet.extend(_explain_group_requirements("clubs", team_info["clubs"], clubs_req))
+    unmet.extend(_explain_group_requirements("leagues", team_info["leagues"], leagues_req))
+    unmet.extend(_explain_version_requirements(team_info["versions"], versions_req))
+
+    return unmet
+
+
 def _score_min_max_scalar(
     value: float,
     min_value: float | None,
@@ -285,6 +326,17 @@ def _score_min_max_scalar(
         unmet += 1
         score += division_score(value, max_value)
     return unmet, score
+
+
+def _explain_min_max_scalar(name: str, value: float, requirement: dict[str, Any]) -> list[str]:
+    unmet: list[str] = []
+    min_value = requirement.get("min")
+    max_value = requirement.get("max")
+    if min_value is not None and value < min_value:
+        unmet.append(f"{name}.min:{min_value}")
+    if max_value is not None and value > max_value:
+        unmet.append(f"{name}.max:{max_value}")
+    return unmet
 
 
 def _score_group_requirements(
@@ -335,6 +387,39 @@ def _score_group_requirements(
     return requirement_score, unmet_requirements
 
 
+def _explain_group_requirements(
+    group_name: str,
+    counts: dict[str, int],
+    requirement: dict[str, Any],
+) -> list[str]:
+    unmet: list[str] = []
+    for item in requirement.get("min") or []:
+        name = item["name"]
+        number = item["number"]
+        if counts.get(name, 0) < number:
+            unmet.append(f"{group_name}.min:{name}:{number}")
+
+    for item in requirement.get("max") or []:
+        name = item["name"]
+        number = item["number"]
+        if counts.get(name, 0) > number:
+            unmet.append(f"{group_name}.max:{name}:{number}")
+
+    exact = requirement.get("exact")
+    if exact is not None and len(counts) != exact:
+        unmet.append(f"{group_name}.exact:{exact}")
+
+    player_min = requirement.get("player_min")
+    if player_min is not None and any(count < player_min for count in counts.values()):
+        unmet.append(f"{group_name}.player_min:{player_min}")
+
+    player_max = requirement.get("player_max")
+    if player_max is not None and any(count > player_max for count in counts.values()):
+        unmet.append(f"{group_name}.player_max:{player_max}")
+
+    return unmet
+
+
 def _score_version_requirements(
     requirement_score: float,
     unmet_requirements: int,
@@ -358,6 +443,28 @@ def _score_version_requirements(
             requirement_score += division_score(count, number)
 
     return requirement_score, unmet_requirements
+
+
+def _explain_version_requirements(
+    versions: dict[str, int],
+    requirement: dict[str, Any],
+) -> list[str]:
+    unmet: list[str] = []
+    for item in requirement.get("min") or []:
+        name = item["name"]
+        number = item["number"]
+        count = sum(count for version, count in versions.items() if name in version)
+        if count < number:
+            unmet.append(f"versions.min:{name}:{number}")
+
+    for item in requirement.get("max") or []:
+        name = item["name"]
+        number = item["number"]
+        count = sum(count for version, count in versions.items() if name in version)
+        if count > number:
+            unmet.append(f"versions.max:{name}:{number}")
+
+    return unmet
 
 
 def evaluate_solution(
