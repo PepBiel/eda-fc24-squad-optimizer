@@ -13,8 +13,6 @@ venv/
 
 results/raw/*.json
 results/raw/*.txt
-results/raw/*.csv
-!results/raw/.gitkeep
 
 *.sqlite
 *.sql

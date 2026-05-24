@@ -14,7 +14,7 @@ El repositorio contiene:
 - implementacion comun de carga, restricciones, fitness y reparacion en `src/fc24eda/`;
 - ejecucion parametrizable en `scripts/run_comparison.py`;
 - generacion de tablas resumen en `scripts/build_report_tables.py`;
-- resultados UMDA en `results/raw/`;
+- resultados UMDA en `results/raw/` (CSV completos versionados para reproducibilidad);
 - resumen comparativo en `results/summary/`.
 
 ## Decisiones Metodologicas
