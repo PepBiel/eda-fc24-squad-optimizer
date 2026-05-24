@@ -26,6 +26,9 @@
 \captionsetup{font=footnotesize,labelfont=bf,skip=2pt}
 \hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=black}
 \renewcommand{\refname}{Referencias}
+\urlstyle{same}
+\newcommand{\repoUrl}{https://github.com/PepBiel/eda-fc24-squad-optimizer}
+\newcommand{\tfgUrl}{https://github.com/PepBiel/eda-fc24-squad-optimizer/blob/main/Treball_Final_de_Grau_vFinal.pdf}
 
 \title{\vspace{-1.0cm}\textbf{Aplicación de EDAs a la optimización de plantillas SBC en FC24}\vspace{-0.45cm}}
 \author{Josep Gabriel Fornes Reynes}
@@ -33,39 +36,39 @@
 
 \begin{document}
 \maketitle
-\vspace{-0.6cm}
+\vspace{-0.72cm}
+\begin{center}
+\footnotesize\href{\repoUrl}{Repositorio del proyecto}\quad $|$ \quad\href{\tfgUrl}{Memoria del TFG original}
+\end{center}
+\vspace{-0.45cm}
 
 \section{Contexto y objetivo}
 
-Este trabajo parte de un TFG previo sobre \textbf{FC24 Ultimate Team}, donde se resolvían desafíos de creación de plantillas (SBC/DCP) mediante técnicas evolutivas \cite{fornes2025}. Cada desafío consiste en formar una plantilla de 11 jugadores que cumpla restricciones como media mínima, química, nacionalidades, ligas, clubes, número máximo de jugadores por grupo o versiones especiales de carta. Además, interesa minimizar el precio, ya que los jugadores entregados en un SBC se pierden.
+Este trabajo parte de mi Trabajo Final de Grado, centrado en \textbf{FC24 Ultimate Team}, donde se abordaba la resolución de desafíos de creación de plantillas (SBC/DCP) mediante técnicas evolutivas \cite{fornes2025}. En estos desafíos se debe construir una plantilla de 11 jugadores que cumpla restricciones como media mínima, química, ligas, clubes, nacionalidades, número máximo o mínimo de jugadores por grupo y versiones especiales de carta. Además, la solución debe ser barata, ya que los jugadores entregados desaparecen del club.
 
-En el TFG original el problema se resolvía con un algoritmo genético (GA): cada individuo era una plantilla completa; la población se evaluaba con una función de \textit{fitness}; y se aplicaban selección, cruce, mutación y elitismo. El objetivo de este trabajo es estudiar si un algoritmo de estimación de distribuciones (EDA), concretamente UMDA categórico, puede mejorar ese baseline. Los EDAs sustituyen los operadores clásicos de recombinación por el aprendizaje de un modelo probabilístico a partir de las mejores soluciones, desde el que después se muestrean nuevas soluciones \cite{muhlenbein1996,larranaga2012}.
+El sistema original resolvía el problema con un algoritmo genético (GA): cada individuo era una plantilla, la población se evaluaba mediante una función de \textit{fitness} y se aplicaban selección, cruce, mutación y elitismo. El objetivo de este trabajo es conectar ese problema real con el seminario de Computación Natural sustituyendo o comparando el GA con un algoritmo de estimación de distribuciones (EDA). En particular, se usa UMDA categórico, donde las nuevas soluciones no se generan mediante operadores genéticos, sino aprendiendo una distribución probabilística a partir de las mejores plantillas y muestreando desde ella \cite{muhlenbein1996,larranaga2012,seminario}.
 
-Cada solución se representa como
-\[
-    x=(x_1,\ldots,x_{11}),
-\]
-donde $x_i$ es el jugador asignado al slot $i$ de la formación. La función de \textit{fitness} replica la lógica del TFG: combina desviación respecto a los requisitos, coste normalizado y una penalización adicional por cada requisito incumplido,
+Cada solución se representa como $x=(x_1,\ldots,x_{11})$, donde $x_i$ es el jugador asignado al slot $i$. La función de \textit{fitness} replica la lógica del TFG:
 \[
     f(x)=d(x)+c(x)+\lambda u(x),
 \]
-donde $d(x)$ mide la distancia a los requisitos, $c(x)$ el coste normalizado y $u(x)$ el número de requisitos incumplidos. Se mantiene también la regla de no repetir nombres dentro del once: el dataset conserva cartas distintas de un mismo jugador, pero una plantilla no puede contener dos veces el mismo nombre.
+donde $d(x)$ mide la distancia a los requisitos, $c(x)$ el coste normalizado y $u(x)$ el número de requisitos incumplidos. Se conserva el dataset completo, incluyendo cartas distintas de un mismo jugador, pero se repara cada plantilla para no repetir el mismo nombre dentro del once, siguiendo la restricción efectiva del GA original.
 
 \section{Modos de evaluación y protocolo experimental}
 
-Se conservan los dos modos del TFG: \textbf{club} y \textbf{BD}. La diferencia no está en el algoritmo, sino en la normalización del coste dentro de la \textit{fitness}. En modo \textbf{club}, el precio se normaliza usando como referencia los jugadores disponibles en \texttt{jugadores.json} (propios del club); por tanto, el coste pesa más y se favorecen plantillas baratas. En modo \textbf{BD}, la referencia procede de la base de datos global usada en el TFG, concretamente de un máximo de precio mucho mayor precomputado en \texttt{config/price\_bounds.json}; por tanto, el mismo coste queda normalizado con un valor menor y pesa menos. Así, BD no significa que el algoritmo pueda elegir cualquier jugador de la base de datos, sino que utiliza una referencia global para escalar el precio.
+Se mantienen los dos modos de evaluación del TFG: \textbf{club} y \textbf{BD}. La diferencia no está en los jugadores que puede elegir el algoritmo, sino en la normalización del precio dentro de la \textit{fitness}. En modo \textbf{club}, el coste se normaliza con una referencia calculada a partir de los jugadores disponibles en \texttt{jugadores.json}, por lo que el precio pesa más. En modo \textbf{BD}, se usa una referencia global mucho mayor, precomputada en \texttt{config/price\_bounds.json}; por tanto, el mismo coste queda relativamente menos penalizado. Así, BD no significa que el algoritmo pueda escoger cualquier jugador de la base de datos, sino que usa la base de datos para escalar el coste.
 
-También se mantiene la lógica original de posiciones: un jugador puede ocupar un slot que no corresponda a su posición natural, pero entonces su química es cero. Esto es importante porque algunos SBC no requieren química alta y, en esos casos, filtrar por posición podría eliminar soluciones válidas y baratas. Sin embargo, cuando el reto exige química, la compatibilidad posicional vuelve a ser decisiva.
+También se mantiene la lógica original de posiciones: un jugador puede ocupar un slot que no sea su posición natural, pero entonces su química es cero. Esto evita imponer un filtro duro que podría descartar soluciones válidas en retos sin química alta. No obstante, cuando el desafío exige química, la compatibilidad posicional y las combinaciones de liga, club o nacionalidad se vuelven decisivas.
 
-El protocolo usa los mismos 20 desafíos del TFG y cinco semillas por configuración, dando 100 ejecuciones por variante. La fiabilidad se calcula como requisitos cumplidos sobre el total de requisitos evaluados en esas ejecuciones (380). También se registra el coste medio de la mejor plantilla encontrada y el tiempo medio de ejecución. El GA se toma como baseline histórico; por ello, los tiempos no se comparan contra él, solo entre variantes UMDA ejecutadas en el nuevo repositorio.
+El protocolo usa los mismos 20 desafíos del TFG y cinco semillas por configuración, dando 100 ejecuciones por variante. La fiabilidad se calcula como requisitos cumplidos sobre 380 requisitos evaluados. Además, se registra el coste medio de la mejor plantilla y el tiempo medio de ejecución. El GA se usa como \textbf{baseline histórico}; por ello, el tiempo solo se compara entre variantes UMDA ejecutadas en el nuevo repositorio \cite{repo}.
 
 \section{Fase 1: sustitución directa por UMDA}
 
-La primera fase prueba una sustitución directa del GA por UMDA. Cada slot puede elegir cualquier jugador del dataset. Esta formulación es comparable con la del GA, pero resulta difícil para UMDA: hay 11 variables categóricas y cada una puede tomar 1008 valores. UMDA estima una distribución univariante,
+La primera fase evalúa una sustitución directa del GA por UMDA. Cada uno de los 11 slots puede elegir cualquier jugador del dataset. Esta formulación es comparable con la del GA, pero es desfavorable para UMDA: cada variable categórica tiene 1008 valores posibles y el modelo aprende una distribución univariante,
 \[
-    P(x) \approx \prod_{i=1}^{11}P_i(x_i),
+    P(x) \approx \prod_{i=1}^{11}P_i(x_i).
 \]
-por lo que aprende probabilidades independientes por slot. El problema SBC, en cambio, no es independiente: la química depende de combinaciones de liga, club, nacionalidad y posición; la media se calcula sobre el conjunto completo; y algunas restricciones piden cardinalidades exactas o cartas especiales.
+El problema SBC, en cambio, no es univariante: la química depende de combinaciones entre jugadores, la media se calcula sobre la plantilla completa y algunas restricciones exigen cantidades exactas de ligas, nacionalidades o versiones de carta.
 
 \begin{table}[h]
 \centering
@@ -79,17 +82,17 @@ BD & GA histórico & 339/380 & 89,21\% & 77.501,50 & -- \\
 BD & UMDA directo & 313/380 & 82,37\% & 76.819,50 & 24,39s \\
 \bottomrule
 \end{tabular}
-\caption{Comparación inicial entre GA y UMDA directo.}
+\caption{Comparación estricta entre el GA histórico y UMDA directo.}
 \label{tab:directo}
 \end{table}
 
-Los resultados de la Tabla~\ref{tab:directo} muestran que UMDA directo no supera al GA. En modo \textbf{club} pierde fiabilidad y además obtiene mayor coste medio. En modo \textbf{BD} el coste medio es parecido al del GA, pero la fiabilidad cae de 89,21\% a 82,37\%. Esto indica que el problema no era solo económico: UMDA directo no encuentra bien combinaciones factibles. El GA tolera mejor la representación amplia porque trabaja con plantillas completas y puede conservar bloques útiles mediante cruce y elitismo; UMDA, al remuestrear cada slot de forma independiente, tiende a romper esas estructuras.
+La Tabla~\ref{tab:directo} muestra que UMDA directo no supera al GA. En \textbf{club} pierde fiabilidad y además obtiene mayor coste medio. En \textbf{BD} reduce ligeramente el coste medio, pero cae de 89,21\% a 82,37\% de fiabilidad. El resultado indica que el problema no era únicamente económico: UMDA directo no encuentra bien combinaciones factibles. El GA tolera mejor el espacio amplio porque opera sobre plantillas completas y puede conservar bloques útiles mediante cruce y elitismo; UMDA, al remuestrear cada slot de forma independiente, tiende a romper esas estructuras.
 
 \section{Fase 2: UMDA estructurado}
 
-A partir del diagnóstico anterior se implementa una variante denominada \texttt{umda\_structured}. La función de evaluación, los retos y los datos se mantienen, pero cambia la representación que recibe UMDA. En vez de permitir que cada slot elija entre todos los jugadores, se construye un dominio local de 150 candidatos por slot. Estos dominios priorizan jugadores compatibles con la posición, alineados con los requisitos del reto, cercanos a la media mínima y razonables en precio. También se reserva una parte para jugadores fuera de posición, de modo que la posición no se convierte en una restricción dura.
+A partir de ese diagnóstico se implementa \texttt{umda\_structured}. La evaluación, los retos y los datos no cambian; cambia la representación que recibe UMDA. En vez de permitir que cada slot elija entre todos los jugadores, se construye un dominio local de 150 candidatos por slot. Estos dominios priorizan jugadores compatibles con la posición, alineados con los requisitos del reto, cercanos a la media mínima y razonables en precio. También se reserva una parte para jugadores fuera de posición, por lo que la posición no se convierte en una restricción dura.
 
-La idea no es hacer una comparación idéntica a la fase 1, sino adaptar el espacio de búsqueda al tipo de modelo que aprende UMDA. En EDAs, la representación es parte esencial del método: si el dominio categórico está demasiado disperso, las probabilidades estimadas son poco informativas; si el dominio está estructurado, el modelo puede aprender regularidades útiles con muchas menos evaluaciones.
+Esta segunda fase no invalida la primera: ambas responden a preguntas distintas. La fase directa evalúa el cambio de operador evolutivo manteniendo una codificación casi equivalente a la del GA; la fase estructurada evalúa una versión más propia de un EDA, donde se introduce conocimiento del problema antes de estimar la distribución. En EDAs, la representación es parte del método: si el dominio categórico es demasiado disperso, las probabilidades estimadas son poco informativas; si el dominio está estructurado, el aprendizaje probabilístico recibe una señal mucho más útil.
 
 \begin{table}[h]
 \centering
@@ -110,55 +113,61 @@ BD & UMDA estructurado & 348/380 & 91,58\% & 66.450,00 & 1,76s \\
 \label{tab:final}
 \end{table}
 
-La Tabla~\ref{tab:final} muestra que UMDA estructurado mejora claramente. En modo \textbf{club} alcanza 342/380 requisitos cumplidos, frente a 322/380 del GA. Su coste medio es algo superior al del GA, pero inferior al de UMDA directo. En modo \textbf{BD} obtiene 348/380 requisitos cumplidos, con 91,58\% de fiabilidad, y además reduce el coste medio respecto al GA. El tiempo medio baja de unos 23--24 segundos en UMDA directo a menos de 2 segundos. Esta comparación temporal solo debe hacerse entre variantes UMDA, porque no se dispone de un runtime homogéneo para el GA histórico.
+La Tabla~\ref{tab:final} resume el resultado principal. En modo \textbf{club}, UMDA estructurado alcanza 342/380 requisitos cumplidos, frente a 322/380 del GA. Su coste medio es superior al del GA, pero inferior al de UMDA directo. En modo \textbf{BD}, obtiene 348/380 requisitos cumplidos, 91,58\% de fiabilidad y un coste medio menor que el GA histórico. Además, el runtime medio cae de unos 23--24 segundos a menos de 2 segundos respecto a UMDA directo. Esta comparación temporal solo se realiza entre variantes UMDA, ya que no se dispone de un runtime homogéneo del GA histórico.
 
-\section{Diagnóstico y discusión}
+\subsection{Diagnóstico sin penalización de precio}
 
-La mejora de UMDA estructurado no resuelve todos los retos. Los fallos restantes se concentran en desafíos con media mínima alta, restricciones exactas de nacionalidad/liga o versiones muy escasas, como \textit{Dynamic Duos}. En modo \textbf{club} destacan retos como \textit{Icon Flash}, \textit{TriNación Elite}, \textit{Liga y Nación Mixta} o \textit{Leyendas Supremas}. En modo \textbf{BD}, al pesar menos el coste, algunos retos mejoran, pero siguen apareciendo fallos de media, química alta o cartas especiales.
+Para separar el efecto del coste de la dificultad propia de los requisitos, se ejecutó UMDA estructurado sin penalización de precio en la \textit{fitness}. El resultado fue 350/380 requisitos cumplidos, con 92,11\% de fiabilidad y un coste medio de 113.038,50 monedas. Se resolvieron completamente 16 de los 20 retos; los cuatro restantes quedaron a un requisito pendiente: media mínima en \textit{Icon Flash}, \textit{Liga y Nación Mixta} y \textit{TriNación Elite}, y presencia insuficiente de cartas \textit{Dynamic Duos} en \textit{Leyendas Supremas}. Esto indica que parte de los errores proviene del compromiso coste-requisitos, aunque también existen restricciones combinatorias difíciles con el dataset disponible. En consecuencia, este experimento debe interpretarse como una ejecución sin penalización de precio en la \textit{fitness}; la construcción de dominios puede seguir usando el precio como criterio de ordenación.
 
-Para separar el efecto del precio de la dificultad propia de los requisitos, se ejecutó UMDA estructurado sin penalización de coste en la \textit{fitness}. El resultado fue 350/380 requisitos cumplidos, con una fiabilidad del 92,11\% y un coste medio de 113.038,50 monedas. Se resolvieron completamente 16 de los 20 retos; los cuatro restantes quedaron a un requisito pendiente: media mínima en \textit{Icon Flash}, \textit{Liga y Nación Mixta} y \textit{TriNación Elite}, y dos cartas \textit{Dynamic Duos} en \textit{Leyendas Supremas}. Esto sugiere que parte de los errores venían del compromiso coste-requisitos, pero que también existen restricciones combinatorias difíciles con el dataset disponible.
+\section{Discusión, limitaciones y trabajo futuro}
 
-La lectura principal es doble. Primero, UMDA directo no supera al GA porque el problema tiene dependencias fuertes entre jugadores y UMDA aprende marginales independientes. Segundo, UMDA estructurado sí mejora porque reduce el espacio de búsqueda y aumenta la señal estadística: el algoritmo ya no debe descubrir desde cero qué jugadores son razonables para cada slot o reto. Por tanto, no debe afirmarse simplemente que ``UMDA gana al GA'', sino que un EDA puede ser competitivo si el problema se codifica de forma adecuada para el aprendizaje probabilístico.
+La lectura metodológica de los experimentos es clara. UMDA directo no supera al GA porque el modelo univariante asume independencia entre slots, mientras que las soluciones buenas dependen de combinaciones de jugadores: química, ligas, nacionalidades, versiones especiales, compatibilidad posicional y media global. En este contexto, elegir buenos jugadores de forma individual no garantiza construir una plantilla válida. El GA histórico tolera mejor esta representación amplia porque evoluciona plantillas completas y puede conservar bloques útiles mediante cruce y elitismo. UMDA, en cambio, remuestrea cada slot de forma independiente y puede romper esas combinaciones.
 
-\section{Limitaciones y trabajo futuro}
-
-La principal limitación es que el GA se usa como baseline histórico. No se ha reejecutado dentro del nuevo repositorio ni se ha probado con la misma representación estructurada, por lo que no se puede separar completamente el efecto del algoritmo y el efecto de la reducción del dominio. Además, los tiempos solo son comparables entre variantes UMDA. Otra limitación es que no se han probado EDAs multivariantes; modelos capaces de aprender dependencias entre slots podrían ajustarse mejor a requisitos de química, ligas y nacionalidades, tal como se plantea en la literatura sobre modelos probabilísticos en computación evolutiva \cite{larranaga2012}.
-
-Como próximos pasos, sería conveniente: (i) reejecutar el GA en el nuevo entorno; (ii) aplicar dominios estructurados también al GA; (iii) probar un EDA multivariante, por ejemplo basado en redes bayesianas; (iv) añadir una reparación inteligente o búsqueda local tras el muestreo para corregir media, química o cartas especiales; y (v) analizar la sensibilidad a \texttt{domain\_size}, \texttt{size\_gen} y \texttt{max\_iter}. Estos experimentos permitirían distinguir si la mejora procede del algoritmo probabilístico, del filtrado de candidatos o de la combinación de ambos factores.
-
-
-
-Además, la comparación debe interpretarse en dos niveles. La fase directa evalúa el cambio de operador evolutivo manteniendo una codificación casi idéntica a la del GA. La fase estructurada evalúa una versión más propia de un EDA, donde se reduce el dominio de cada variable antes de estimar la distribución. Esta segunda fase no invalida la primera: ambas son necesarias. La primera muestra la limitación del modelo univariante; la segunda muestra que, al introducir conocimiento del problema en la representación, el aprendizaje probabilístico se vuelve útil.
-
-También conviene distinguir entre mejorar la fiabilidad y mejorar el coste. En modo \textbf{club}, UMDA estructurado mejora mucho el cumplimiento de requisitos, pero no consigue ser más barato que el GA histórico. En modo \textbf{BD}, en cambio, mejora tanto la fiabilidad como el coste medio. Esto se explica porque en BD el coste tiene menos peso relativo y el algoritmo puede priorizar combinaciones válidas sin quedar tan penalizado por usar cartas algo más caras. El experimento sin precio confirma esta interpretación: cuando el coste desaparece de la \textit{fitness}, la fiabilidad sube hasta el 92,11\%, pero el precio medio aumenta notablemente.
+UMDA estructurado mejora porque reduce el espacio de búsqueda y aumenta la señal estadística disponible para el modelo. Al construir dominios locales por slot, el algoritmo ya no debe descubrir desde cero qué jugadores son razonables para cada slot o reto. Esta mejora no implica que ``UMDA gane al GA'' en general, sino que un EDA puede ser competitivo cuando el problema se codifica de forma coherente con el modelo probabilístico que aprende. La fase directa y la fase estructurada responden, por tanto, a preguntas distintas: la primera evalúa la sustitución directa del operador evolutivo; la segunda evalúa una formulación más adecuada para un EDA.
 
 \begin{table}[h]
 \centering
-\begin{tabular}{p{0.28\linewidth}p{0.62\linewidth}}
+\small
+\begin{tabular}{p{0.30\linewidth}p{0.62\linewidth}}
 \toprule
 Aspecto observado & Interpretación \\
 \midrule
-UMDA directo pierde frente al GA & El dominio completo es demasiado amplio para un modelo univariante. \\
-UMDA estructurado mejora & Los dominios locales introducen señal útil y reducen evaluaciones poco prometedoras. \\
-BD mejora el equilibrio coste-requisitos & El coste queda normalizado con una referencia mayor y penaliza menos. \\
-Persisten fallos de media y cartas especiales & Algunas restricciones requieren combinaciones muy concretas o cartas escasas. \\
+UMDA directo pierde frente al GA & El dominio completo es demasiado amplio y poco informativo para un modelo univariante. \\
+UMDA estructurado mejora & Los dominios locales reducen evaluaciones poco prometedoras e introducen conocimiento del problema. \\
+BD cambia el equilibrio & El coste se normaliza con una referencia mayor y penaliza menos las plantillas caras. \\
+Persisten fallos residuales & Algunas medias altas o cartas especiales requieren combinaciones muy concretas. \\
 \bottomrule
 \end{tabular}
-\caption{Lectura metodológica de los resultados obtenidos.}
+\caption{Interpretación metodológica de los resultados.}
 \label{tab:interpretacion}
 \end{table}
 
-Desde el punto de vista de reproducibilidad, el repositorio debe conservar los ficheros de datos usados en los experimentos, los resultados agregados y los parámetros principales de ejecución. En particular, es importante documentar el tamaño del dominio local, el número de generaciones, el tamaño de población, las semillas y el modo de precio. Sin esta información, una mejora de fiabilidad podría deberse a una configuración distinta y no al cambio metodológico. Para una entrega académica, lo más claro es acompañar la memoria con el código, los CSV de resultados y un README que indique cómo regenerar las tablas.
+También conviene distinguir entre mejorar la fiabilidad y mejorar el coste. En modo \textbf{club}, UMDA estructurado mejora claramente el cumplimiento de requisitos, aunque no consigue ser más barato que el GA histórico. En modo \textbf{BD}, en cambio, mejora tanto la fiabilidad como el coste medio. Esto se explica porque en BD el coste tiene menos peso relativo dentro de la \textit{fitness}, lo que permite priorizar combinaciones válidas sin penalizar tanto el uso de cartas algo más caras. El experimento sin penalización de precio en la \textit{fitness} refuerza esta interpretación: UMDA estructurado alcanza 350/380 requisitos cumplidos, con una fiabilidad del 92,11\%, aunque el coste medio aumenta hasta 113.038,50 monedas. Por tanto, parte de los errores venían del compromiso coste-requisitos, pero siguen existiendo restricciones combinatorias difíciles con el dataset disponible.
+
+La comparación se realiza tomando el GA del TFG como baseline empírico, ya que fue evaluado sobre los mismos desafíos, métricas y modos de precio. Por tanto, los resultados permiten comparar de forma directa el comportamiento del nuevo enfoque basado en UMDA frente al sistema original. La única precaución es que los tiempos de ejecución no son completamente comparables, porque el GA pertenece al desarrollo previo y no se ha reejecutado en el mismo entorno que las variantes UMDA. Como trabajo futuro, sería interesante reimplementar el GA en el nuevo repositorio y probarlo también con dominios estructurados, pero esto no invalida la comparación principal: UMDA directo no basta, mientras que UMDA estructurado mejora el baseline histórico en fiabilidad y, en modo BD, también en coste medio.
+
+Desde el punto de vista de reproducibilidad, el repositorio incluye el código, los datos de jugadores y retos, los límites de normalización de precio, los CSV crudos de cada ejecución en \texttt{results/raw} y los resúmenes agregados en \texttt{results/summary}. Esto permite comprobar de dónde salen las tablas y repetir los experimentos con las mismas semillas, lo cual es importante para que la comparación no dependa únicamente de resultados agregados \cite{repo}.
+
+Como trabajo futuro, convendría: (i) reejecutar el GA en el mismo entorno; (ii) aplicar dominios estructurados también al GA; (iii) probar EDAs multivariantes, por ejemplo basados en redes bayesianas, capaces de capturar dependencias entre slots; (iv) incorporar reparación inteligente o búsqueda local tras el muestreo para corregir media, química y cartas especiales; y (v) estudiar la sensibilidad a \texttt{domain\_size}, \texttt{size\_gen} y \texttt{max\_iter}. Estos experimentos permitirían distinguir con más precisión si la mejora proviene del aprendizaje probabilístico, del preprocesamiento del dominio o de la combinación de ambos factores.
 
 \section{Conclusión}
 
-El trabajo demuestra que aplicar EDAs al problema de optimización de plantillas SBC es viable, pero que la representación del problema es crítica. La sustitución directa del GA por UMDA no mejora el baseline, porque el modelo univariante no captura las dependencias entre jugadores. En cambio, al introducir dominios estructurados por posición y requisitos, UMDA supera al GA histórico en fiabilidad: 90,00\% en modo \textbf{club} y 91,58\% en modo \textbf{BD}. En BD también consigue menor coste medio. La conclusión final es que los EDAs no son automáticamente superiores a los GA, pero pueden ser muy competitivos cuando el espacio de búsqueda se formula de manera coherente con el modelo probabilístico que van a aprender.
+El trabajo demuestra que aplicar EDAs al problema de optimización de plantillas SBC no solo es viable, sino que puede mejorar los resultados del algoritmo genético original cuando la representación se adapta al modelo probabilístico utilizado. La sustitución directa del GA por UMDA no mejora el baseline, ya que el modelo univariante no captura las dependencias entre jugadores. Sin embargo, al introducir dominios estructurados por slot y requisitos del desafío, UMDA supera al GA histórico en fiabilidad: pasa de 84,74\% a 90,00\% en modo \textbf{club} y de 89,21\% a 91,58\% en modo \textbf{BD}. Además, en modo \textbf{BD} también reduce el coste medio de la plantilla, de 77.501,50 a 66.450,00 monedas.
+
+Por tanto, el resultado principal del trabajo es que el EDA estructurado mejora el sistema original en los experimentos realizados. La comparación también muestra que esta mejora no se obtiene simplemente sustituyendo cruce y mutación por UMDA, sino formulando el espacio de búsqueda de manera coherente con el aprendizaje probabilístico. En consecuencia, los EDAs no son automáticamente superiores a los GA, pero pueden ser muy competitivos e incluso superar al baseline cuando la representación del problema incorpora conocimiento útil sobre los requisitos del dominio.
 
 \begin{thebibliography}{9}
 \bibitem{fornes2025}
 J.~G. Fornes Reynes.
 \newblock \textit{Tècniques evolutives per a la presa de decisions en videojocs}.
 \newblock Trabajo de Fin de Grado, Universitat de les Illes Balears, 2024--2025.
+\newblock Memoria disponible en: \href{\tfgUrl}{memoria del TFG original}.
+
+\bibitem{repo}
+J.~G. Fornes Reynes.
+\newblock \textit{EDA FC24 Squad Optimizer}.
+\newblock Repositorio de código y resultados experimentales.
+\newblock Disponible en: \href{\repoUrl}{repositorio GitHub del proyecto}.
 
 \bibitem{muhlenbein1996}
 H.~Mühlenbein and G.~Paaß.
